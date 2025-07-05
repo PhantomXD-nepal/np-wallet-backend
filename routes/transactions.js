@@ -5,15 +5,20 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { title, amount, category, user_id } = req.body;
+    const { title, amount, category, user_id, type } = req.body;
 
-    if (!title || !user_id || !category || amount === undefined) {
+    if (!title || !user_id || !category || amount === undefined || !type) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Convert type to is_expense boolean
+    const is_expense = type === "expense";
+    // Adjust amount based on transaction type
+    const adjustedAmount = is_expense ? -Math.abs(amount) : Math.abs(amount);
+
     await sql`
-      INSERT INTO transactions (user_id, title, amount, category, created_at)
-      VALUES (${user_id}, ${title}, ${amount}, ${category}, CURRENT_DATE)
+      INSERT INTO transactions (user_id, title, amount, category, is_expense, created_at)
+      VALUES (${user_id}, ${title}, ${adjustedAmount}, ${category}, ${is_expense}, CURRENT_DATE)
       RETURNING *
     `;
 
