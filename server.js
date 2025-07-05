@@ -9,6 +9,12 @@ import cors from "cors";
 import job from "./config/cron.js";
 dotenv.config();
 
+const app = express();
+
+app.use(rateLimiter);
+app.use(cors());
+app.use(express.json());
+
 if (process.env.NODE_ENV === "production") {
   job.start();
 }
@@ -16,12 +22,6 @@ if (process.env.NODE_ENV === "production") {
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
-
-const app = express();
-
-app.use(rateLimiter);
-app.use(cors());
-app.use(express.json());
 
 async function initDB() {
   try {
