@@ -6,7 +6,16 @@ import transactionsRoutes from "./routes/transactions.js";
 import summaryRoutes from "./routes/summary.js";
 import cors from "cors";
 
+import job from "./config/cron.js";
 dotenv.config();
+
+if (process.env.NODE_ENV === "production") {
+  job.start();
+}
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 const app = express();
 
