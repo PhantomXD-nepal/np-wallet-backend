@@ -4,12 +4,14 @@ import { sql } from "./config/db.js";
 import { rateLimiter } from "./middleware/rateLimiter.js";
 import transactionsRoutes from "./routes/transactions.js";
 import summaryRoutes from "./routes/summary.js";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
 
 app.use(rateLimiter);
+app.use(cors());
 app.use(express.json());
 
 async function initDB() {

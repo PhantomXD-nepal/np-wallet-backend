@@ -30,6 +30,7 @@ router.get("/:userId", async (req, res) => {
       income: incomeResult[0]?.income,
       expenses: expensesResult[0]?.expenses,
     });
+    console.log(balanceResult, incomeResult, expensesResult);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
