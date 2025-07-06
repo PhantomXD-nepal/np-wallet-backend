@@ -5,26 +5,32 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { title, amount, category, user_id, type } = req.body;
+    const { title, amount, category, user_id } = req.body;
 
-    if (!title || !user_id || !category || amount === undefined || !type) {
+    if (!title || !user_id || !category || amount === undefined) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Convert type to is_expense boolean
-    const is_expense = type === "expense";
-    // Adjust amount based on transaction type
-    const adjustedAmount = is_expense ? -Math.abs(amount) : Math.abs(amount);
+    const result = await sql`
+      INSERT INTO transactions (
+        user_id,
+        title,
+        amount,
+        category,
+      )
+      VALUES (
+        ${user_id},
+        ${title},
+        ${adjustedAmount},
+        ${category},
 
-    await sql`
-      INSERT INTO transactions (user_id, title, amount, category, is_expense, created_at)
-      VALUES (${user_id}, ${title}, ${adjustedAmount}, ${category}, ${is_expense}, CURRENT_DATE)
+      )
       RETURNING *
     `;
 
-    res.status(201).json({ message: "Transaction added successfully" });
-  } catch (e) {
-    console.log(e);
+    res.status(201).json(result[0]);
+  } catch (error) {
+    console.error("Error creating transaction:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
