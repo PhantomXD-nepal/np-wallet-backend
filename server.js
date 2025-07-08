@@ -5,6 +5,7 @@ import rateLimiter from "./middleware/rateLimiter.js";
 
 import transactionsRoute from "./routes/transactionsRoute.js";
 import job from "./config/cron.js";
+import cors from "cors";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ const app = express();
 if (process.env.NODE_ENV === "production") job.start();
 
 // middleware
+app.use(cors());
 app.use(rateLimiter);
 app.use(express.json());
 
