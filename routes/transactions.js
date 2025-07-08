@@ -16,14 +16,13 @@ router.post("/", async (req, res) => {
         user_id,
         title,
         amount,
-        category,
+        category
       )
       VALUES (
         ${user_id},
         ${title},
-        ${adjustedAmount},
-        ${category},
-
+        ${amount},
+        ${category}
       )
       RETURNING *
     `;
